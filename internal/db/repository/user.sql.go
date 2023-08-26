@@ -12,6 +12,22 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const attachRoleToUser = `-- name: AttachRoleToUser :exec
+INSERT INTO user_role (user_id, role_id)
+VALUES ($1, $2)
+ON CONFLICT DO NOTHING
+`
+
+type AttachRoleToUserParams struct {
+	UserID uuid.UUID `json:"user_id"`
+	RoleID int64     `json:"role_id"`
+}
+
+func (q *Queries) AttachRoleToUser(ctx context.Context, arg AttachRoleToUserParams) error {
+	_, err := q.db.Exec(ctx, attachRoleToUser, arg.UserID, arg.RoleID)
+	return err
+}
+
 const getUser = `-- name: GetUser :one
 SELECT id, name, email, password, avatar, verified_at, created_at, deleted_at
 FROM users
@@ -56,22 +72,6 @@ func (q *Queries) GetUserByAccessToken(ctx context.Context, accessToken string) 
 		&i.DeletedAt,
 	)
 	return i, err
-}
-
-const giveRoleToUser = `-- name: GiveRoleToUser :exec
-INSERT INTO user_role (user_id, role_id)
-VALUES ($1, $2)
-ON CONFLICT DO NOTHING
-`
-
-type GiveRoleToUserParams struct {
-	UserID uuid.UUID `json:"user_id"`
-	RoleID int64     `json:"role_id"`
-}
-
-func (q *Queries) GiveRoleToUser(ctx context.Context, arg GiveRoleToUserParams) error {
-	_, err := q.db.Exec(ctx, giveRoleToUser, arg.UserID, arg.RoleID)
-	return err
 }
 
 const registerUser = `-- name: RegisterUser :one
