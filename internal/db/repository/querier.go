@@ -15,10 +15,12 @@ type Querier interface {
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	GetRoleByName(ctx context.Context, name string) (Role, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
+	GetSessionByAccessToken(ctx context.Context, accessToken string) (Session, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByAccessToken(ctx context.Context, accessToken string) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (User, error)
+	TerminateOtherSessions(ctx context.Context, arg TerminateOtherSessionsParams) error
 	UnsetUserAvatar(ctx context.Context, id uuid.UUID) (User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	VerifyEmail(ctx context.Context, id uuid.UUID) (User, error)

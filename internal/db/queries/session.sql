@@ -15,3 +15,14 @@ SELECT *
 FROM sessions
 WHERE id = $1
 LIMIT 1;
+
+-- name: TerminateOtherSessions :exec
+DELETE
+FROM sessions
+WHERE id <> $1
+  AND user_id = $2;
+
+-- name: GetSessionByAccessToken :one
+SELECT *
+FROM sessions
+WHERE access_token = $1;

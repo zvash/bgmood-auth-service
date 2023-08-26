@@ -16,29 +16,11 @@ const (
 
 func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, repository.User, error) {
 	var user repository.User
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, user, fmt.Errorf("missing metadata")
+	accessToken, err := server.getAccessToken(ctx)
+	if err != nil {
+		return nil, user, err
 	}
-
-	values := md.Get(authorizationHeader)
-	if len(values) == 0 {
-		return nil, user, fmt.Errorf("missing authorization header")
-	}
-
-	authHeader := values[0]
-	fields := strings.Fields(authHeader)
-	if len(fields) < 2 {
-		return nil, user, fmt.Errorf("invalid authorization header format")
-	}
-
-	authType := strings.ToLower(fields[0])
-	if authType != authorizationBearer {
-		return nil, user, fmt.Errorf("unsupported authorization type: %s", authType)
-	}
-
-	accessToken := fields[1]
-	user, err := server.db.GetUserByAccessToken(ctx, accessToken)
+	user, err = server.db.GetUserByAccessToken(ctx, accessToken)
 	if err != nil {
 		return nil, user, fmt.Errorf("invalid access token: %s", err)
 	}
@@ -50,6 +32,32 @@ func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, reposi
 	return payload, user, nil
 }
 
+func (server *Server) getAccessToken(ctx context.Context) (string, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return "", fmt.Errorf("missing metadata")
+	}
+
+	values := md.Get(authorizationHeader)
+	if len(values) == 0 {
+		return "", fmt.Errorf("missing authorization header")
+	}
+
+	authHeader := values[0]
+	fields := strings.Fields(authHeader)
+	if len(fields) < 2 {
+		return "", fmt.Errorf("invalid authorization header format")
+	}
+
+	authType := strings.ToLower(fields[0])
+	if authType != authorizationBearer {
+		return "", fmt.Errorf("unsupported authorization type: %s", authType)
+	}
+
+	accessToken := fields[1]
+	return accessToken, nil
+}
+
 func (server *Server) getAuthenticatedUser(ctx context.Context) (repository.User, error) {
 	user := repository.User{}
 	_, user, err := server.authorizeUser(ctx)
@@ -57,4 +65,13 @@ func (server *Server) getAuthenticatedUser(ctx context.Context) (repository.User
 		return user, err
 	}
 	return user, nil
+}
+
+func (server *Server) getSession(ctx context.Context) (repository.Session, error) {
+	var session repository.Session
+	accessToken, err := server.getAccessToken(ctx)
+	if err != nil {
+		return session, err
+	}
+	return server.db.GetSessionByAccessToken(ctx, accessToken)
 }

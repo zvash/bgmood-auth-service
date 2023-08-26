@@ -76,3 +76,12 @@ func pbLoginRequestToValLoginRequest(pbl *pb.LoginRequest) val.LoginRequest {
 		Password: pbl.GetPassword(),
 	}
 }
+
+func pbChangePasswordRequestToValChangePasswordRequest(pbc *pb.ChangePasswordRequest) val.ChangePasswordRequest {
+	return val.ChangePasswordRequest{
+		CurrentPassword:         pbc.CurrentPassword,
+		NewPassword:             pbc.NewPassword,
+		NewPasswordConfirmation: pbc.NewPasswordConfirmation,
+		TerminateOtherSessions:  pbc.TerminateOtherSessions,
+	}
+}

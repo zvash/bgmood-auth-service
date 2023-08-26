@@ -11,3 +11,10 @@ type LoginRequest struct {
 	Email    string `json:"email" validate:"required"`
 	Password string `json:"password" validate:"required"`
 }
+
+type ChangePasswordRequest struct {
+	CurrentPassword         string `json:"current_password" validate:"required"`
+	NewPassword             string `json:"new_password" validate:"required,min=6"`
+	NewPasswordConfirmation string `json:"new_password_confirmation" validate:"required,min=6,eqfield=NewPassword"`
+	TerminateOtherSessions  bool   `json:"terminate_other_sessions" validate:"omitempty,boolean"`
+}

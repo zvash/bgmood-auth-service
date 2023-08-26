@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/zvash/bgmood-auth-service/internal/db/repository"
 )
@@ -10,6 +11,13 @@ import (
 type DataStore interface {
 	repository.Querier
 	RegisterUserTransaction(ctx context.Context, arg RegisterUserTransactionParams) (RegisterUserTransactionResult, error)
+	ChangePasswordTransaction(
+		ctx context.Context,
+		user repository.User,
+		hashedPassword string,
+		shouldTerminate bool,
+		currentSessionID uuid.UUID,
+	) (bool, error)
 }
 
 type SQLStore struct {

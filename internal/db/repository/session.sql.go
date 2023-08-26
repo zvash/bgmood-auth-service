@@ -85,3 +85,43 @@ func (q *Queries) GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	)
 	return i, err
 }
+
+const getSessionByAccessToken = `-- name: GetSessionByAccessToken :one
+SELECT id, user_id, access_token, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
+FROM sessions
+WHERE access_token = $1
+`
+
+func (q *Queries) GetSessionByAccessToken(ctx context.Context, accessToken string) (Session, error) {
+	row := q.db.QueryRow(ctx, getSessionByAccessToken, accessToken)
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.AccessToken,
+		&i.RefreshToken,
+		&i.UserAgent,
+		&i.ClientIp,
+		&i.IsBlocked,
+		&i.ExpiresAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const terminateOtherSessions = `-- name: TerminateOtherSessions :exec
+DELETE
+FROM sessions
+WHERE id <> $1
+  AND user_id = $2
+`
+
+type TerminateOtherSessionsParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) TerminateOtherSessions(ctx context.Context, arg TerminateOtherSessionsParams) error {
+	_, err := q.db.Exec(ctx, terminateOtherSessions, arg.ID, arg.UserID)
+	return err
+}
