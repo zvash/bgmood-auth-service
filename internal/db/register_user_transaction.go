@@ -31,7 +31,18 @@ func (store *SQLStore) RegisterUserTransaction(ctx context.Context, arg Register
 		if err := arg.AfterRegister(result.User); err != nil {
 			return err
 		}
-		
+		normalRole, err := queries.GetRoleByName(ctx, "normal")
+		if err != nil {
+			return err
+		}
+		err = queries.GiveRoleToUser(ctx, repository.GiveRoleToUserParams{
+			UserID: result.User.ID,
+			RoleID: normalRole.ID,
+		})
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 

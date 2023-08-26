@@ -12,9 +12,11 @@ import (
 
 type Querier interface {
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
+	GetRoleByName(ctx context.Context, name string) (Role, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByAccessToken(ctx context.Context, accessToken string) (User, error)
+	GiveRoleToUser(ctx context.Context, arg GiveRoleToUserParams) error
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (User, error)
 	UnsetUserAvatar(ctx context.Context, id uuid.UUID) (User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)

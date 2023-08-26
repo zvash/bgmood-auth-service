@@ -58,6 +58,22 @@ func (q *Queries) GetUserByAccessToken(ctx context.Context, accessToken string) 
 	return i, err
 }
 
+const giveRoleToUser = `-- name: GiveRoleToUser :exec
+INSERT INTO user_role (user_id, role_id)
+VALUES ($1, $2)
+ON CONFLICT DO NOTHING
+`
+
+type GiveRoleToUserParams struct {
+	UserID uuid.UUID `json:"user_id"`
+	RoleID int64     `json:"role_id"`
+}
+
+func (q *Queries) GiveRoleToUser(ctx context.Context, arg GiveRoleToUserParams) error {
+	_, err := q.db.Exec(ctx, giveRoleToUser, arg.UserID, arg.RoleID)
+	return err
+}
+
 const registerUser = `-- name: RegisterUser :one
 INSERT INTO users (id, name, email, password)
 VALUES ($1, $2, $3, $4)

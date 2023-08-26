@@ -34,3 +34,8 @@ UPDATE users
 SET verified_at = now()
 WHERE id = $1
 RETURNING *;
+
+-- name: GiveRoleToUser :exec
+INSERT INTO user_role (user_id, role_id)
+VALUES ($1, $2)
+ON CONFLICT DO NOTHING;
