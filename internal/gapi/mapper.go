@@ -69,3 +69,10 @@ func repoUserToProtobufUser(repoUser repository.User) *pb.User {
 	}
 	return user
 }
+
+func pbLoginRequestToValLoginRequest(pbl *pb.LoginRequest) val.LoginRequest {
+	return val.LoginRequest{
+		Email:    pbl.GetEmail(),
+		Password: pbl.GetPassword(),
+	}
+}

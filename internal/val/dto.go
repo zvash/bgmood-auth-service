@@ -6,3 +6,8 @@ type RegisterUserRequest struct {
 	Password             string `json:"password" validate:"required,min=6"`
 	PasswordConfirmation string `json:"password_confirmation" validate:"required,min=6,eqfield=Password"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}

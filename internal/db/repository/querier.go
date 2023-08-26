@@ -17,6 +17,7 @@ type Querier interface {
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByAccessToken(ctx context.Context, accessToken string) (User, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (User, error)
 	UnsetUserAvatar(ctx context.Context, id uuid.UUID) (User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
