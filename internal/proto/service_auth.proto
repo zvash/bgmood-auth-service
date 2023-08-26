@@ -1,0 +1,25 @@
+syntax = "proto3";
+import "rpc_register_user.proto";
+import "rpc_login.proto";
+import "rpc_authenticate.proto";
+import "rpc_logout.proto";
+import "rpc_change_password.proto";
+import "rpc_reset_password.proto";
+import "rpc_request_password_reset.proto";
+import "rpc_verify_email.proto";
+
+package pb;
+
+option go_package = "github.com/zvash/bgmood-auth-service/pb";
+
+service Auth {
+  rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse) {}
+  rpc Login (LoginRequest) returns (LoginResponse) {}
+  rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse) {}
+  rpc Logout (LogoutRequest) returns (LogoutResponse) {}
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse) {}
+  rpc RequestPasswordReset (RequestPasswordResetRequest) returns (RequestPasswordResetResponse) {}
+  rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {}
+
+}

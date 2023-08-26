@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/zvash/bgmood-auth-service/pb";
+
+import "user.proto";
+
+message RegisterUserRequest {
+  string email = 1;
+  string name = 2;
+  string password = 3;
+  string password_confirmation = 4;
+}
+
+message RegisterUserResponse {
+  User user = 1;
+}

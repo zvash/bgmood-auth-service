@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/zvash/bgmood-auth-service/pb";
+
+import "google/protobuf/timestamp.proto";
+
+message User {
+  string email = 1;
+  string name = 2;
+  string password = 3;
+  optional string avatar = 4;
+  optional google.protobuf.Timestamp verified_at = 5;
+  google.protobuf.Timestamp create_at = 6;
+}
