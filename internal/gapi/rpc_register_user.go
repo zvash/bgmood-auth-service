@@ -9,7 +9,6 @@ import (
 	"github.com/zvash/bgmood-auth-service/internal/util"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 )
 
 func (server *Server) RegisterUser(ctx context.Context, req *pb.RegisterUserRequest) (*pb.RegisterUserResponse, error) {
@@ -34,8 +33,7 @@ func (server *Server) RegisterUser(ctx context.Context, req *pb.RegisterUserRequ
 		},
 		AfterRegister: func(user repository.User) error {
 			//request notification service to send a verification email to the created user
-			log.Printf("request notification service to send a verification email to the created user: email: %s\n", user.Email)
-			return nil
+			return server.sendVerifyEmail(ctx, user)
 		},
 	}
 	transactionResult, err := server.db.RegisterUserTransaction(ctx, registerUserTransactionParams)

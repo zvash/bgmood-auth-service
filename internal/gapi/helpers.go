@@ -8,6 +8,7 @@ import (
 	"github.com/zvash/bgmood-auth-service/internal/util"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"log"
 	"strings"
 	"time"
 )
@@ -50,4 +51,14 @@ func (server *Server) createUniqueToken(ctx context.Context, email string, durat
 		}
 		return record, nil
 	}
+}
+
+func (server *Server) sendVerifyEmail(ctx context.Context, user repository.User) error {
+	tokenRecord, err := server.createUniqueToken(ctx, user.Email, server.config.VerifyEmailDuration)
+	if err != nil {
+		return err
+	}
+	log.Println("email verification", tokenRecord.Token)
+	//TODO: send a request to notification service to send a verification email to user
+	return nil
 }
