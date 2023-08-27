@@ -58,11 +58,8 @@ func repoUserToProtobufUser(repoUser repository.User) *pb.User {
 		Email:      repoUser.Email,
 		Name:       repoUser.Name,
 		Avatar:     nil,
-		VerifiedAt: nil,
+		IsVerified: !repoUser.VerifiedAt.Time.IsZero(),
 		CreateAt:   timestamppb.New(repoUser.CreatedAt),
-	}
-	if repoUser.VerifiedAt.Valid {
-		user.VerifiedAt = timestamppb.New(repoUser.VerifiedAt.Time)
 	}
 	if repoUser.Avatar.Valid {
 		user.Avatar = &repoUser.Avatar.String
