@@ -109,6 +109,50 @@ func (q *Queries) GetSessionByAccessToken(ctx context.Context, accessToken strin
 	return i, err
 }
 
+const listActiveSessions = `-- name: ListActiveSessions :many
+SELECT id, user_id, access_token, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
+FROM sessions
+WHERE user_id = $1
+  AND expires_at > now()
+  AND is_blocked = false
+ORDER BY access_token = $2, expires_at DESC
+`
+
+type ListActiveSessionsParams struct {
+	UserID      uuid.UUID `json:"user_id"`
+	AccessToken string    `json:"access_token"`
+}
+
+func (q *Queries) ListActiveSessions(ctx context.Context, arg ListActiveSessionsParams) ([]Session, error) {
+	rows, err := q.db.Query(ctx, listActiveSessions, arg.UserID, arg.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Session{}
+	for rows.Next() {
+		var i Session
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.AccessToken,
+			&i.RefreshToken,
+			&i.UserAgent,
+			&i.ClientIp,
+			&i.IsBlocked,
+			&i.ExpiresAt,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const terminateOtherSessions = `-- name: TerminateOtherSessions :exec
 DELETE
 FROM sessions

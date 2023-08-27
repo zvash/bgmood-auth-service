@@ -26,3 +26,11 @@ WHERE id <> $1
 SELECT *
 FROM sessions
 WHERE access_token = $1;
+
+-- name: ListActiveSessions :many
+SELECT *
+FROM sessions
+WHERE user_id = $1
+  AND expires_at > now()
+  AND is_blocked = false
+ORDER BY access_token = $2, expires_at DESC;
