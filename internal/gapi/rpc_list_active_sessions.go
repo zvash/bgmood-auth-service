@@ -14,6 +14,7 @@ func (server *Server) ListActiveSessions(ctx context.Context, req *pb.ListActive
 	resp := &pb.ListActiveSessionsResponse{}
 	for _, session := range sessions {
 		item := &pb.ActiveSession{
+			SessionId: session.ID.String(),
 			ClientIp:  session.ClientIp,
 			UserAgent: session.UserAgent,
 			ExpiresAt: timestamppb.New(session.ExpiresAt),
