@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/zvash/bgmood-auth-service/pb";
+
+message ResendVerificationEmailRequest {}
+
+message ResendVerificationEmailResponse {
+  string message = 1;
+}

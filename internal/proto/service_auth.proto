@@ -11,6 +11,7 @@ import "rpc_list_active_sessions.proto";
 import "rpc_terminate_single_session.proto";
 import "rpc_terminate_other_sessions.proto";
 import "rpc_refresh_token.proto";
+import "rpc_resend_verification_email.proto";
 
 package pb;
 
@@ -29,5 +30,5 @@ service Auth {
   rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse) {}
   rpc RequestPasswordReset (RequestPasswordResetRequest) returns (RequestPasswordResetResponse) {}
   rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {}
-
+  rpc ResendVerificationEmail (ResendVerificationEmailRequest) returns (ResendVerificationEmailResponse) {}
 }

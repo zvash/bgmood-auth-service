@@ -19,18 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Auth_RegisterUser_FullMethodName           = "/pb.Auth/RegisterUser"
-	Auth_RefreshToken_FullMethodName           = "/pb.Auth/RefreshToken"
-	Auth_Login_FullMethodName                  = "/pb.Auth/Login"
-	Auth_ListActiveSessions_FullMethodName     = "/pb.Auth/ListActiveSessions"
-	Auth_TerminateSingleSession_FullMethodName = "/pb.Auth/TerminateSingleSession"
-	Auth_TerminateOtherSessions_FullMethodName = "/pb.Auth/TerminateOtherSessions"
-	Auth_Authenticate_FullMethodName           = "/pb.Auth/Authenticate"
-	Auth_Logout_FullMethodName                 = "/pb.Auth/Logout"
-	Auth_ChangePassword_FullMethodName         = "/pb.Auth/ChangePassword"
-	Auth_ResetPassword_FullMethodName          = "/pb.Auth/ResetPassword"
-	Auth_RequestPasswordReset_FullMethodName   = "/pb.Auth/RequestPasswordReset"
-	Auth_VerifyEmail_FullMethodName            = "/pb.Auth/VerifyEmail"
+	Auth_RegisterUser_FullMethodName            = "/pb.Auth/RegisterUser"
+	Auth_RefreshToken_FullMethodName            = "/pb.Auth/RefreshToken"
+	Auth_Login_FullMethodName                   = "/pb.Auth/Login"
+	Auth_ListActiveSessions_FullMethodName      = "/pb.Auth/ListActiveSessions"
+	Auth_TerminateSingleSession_FullMethodName  = "/pb.Auth/TerminateSingleSession"
+	Auth_TerminateOtherSessions_FullMethodName  = "/pb.Auth/TerminateOtherSessions"
+	Auth_Authenticate_FullMethodName            = "/pb.Auth/Authenticate"
+	Auth_Logout_FullMethodName                  = "/pb.Auth/Logout"
+	Auth_ChangePassword_FullMethodName          = "/pb.Auth/ChangePassword"
+	Auth_ResetPassword_FullMethodName           = "/pb.Auth/ResetPassword"
+	Auth_RequestPasswordReset_FullMethodName    = "/pb.Auth/RequestPasswordReset"
+	Auth_VerifyEmail_FullMethodName             = "/pb.Auth/VerifyEmail"
+	Auth_ResendVerificationEmail_FullMethodName = "/pb.Auth/ResendVerificationEmail"
 )
 
 // AuthClient is the client API for Auth service.
@@ -49,6 +50,7 @@ type AuthClient interface {
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	RequestPasswordReset(ctx context.Context, in *RequestPasswordResetRequest, opts ...grpc.CallOption) (*RequestPasswordResetResponse, error)
 	VerifyEmail(ctx context.Context, in *VerifyEmailRequest, opts ...grpc.CallOption) (*VerifyEmailResponse, error)
+	ResendVerificationEmail(ctx context.Context, in *ResendVerificationEmailRequest, opts ...grpc.CallOption) (*ResendVerificationEmailResponse, error)
 }
 
 type authClient struct {
@@ -167,6 +169,15 @@ func (c *authClient) VerifyEmail(ctx context.Context, in *VerifyEmailRequest, op
 	return out, nil
 }
 
+func (c *authClient) ResendVerificationEmail(ctx context.Context, in *ResendVerificationEmailRequest, opts ...grpc.CallOption) (*ResendVerificationEmailResponse, error) {
+	out := new(ResendVerificationEmailResponse)
+	err := c.cc.Invoke(ctx, Auth_ResendVerificationEmail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
@@ -183,6 +194,7 @@ type AuthServer interface {
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	RequestPasswordReset(context.Context, *RequestPasswordResetRequest) (*RequestPasswordResetResponse, error)
 	VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error)
+	ResendVerificationEmail(context.Context, *ResendVerificationEmailRequest) (*ResendVerificationEmailResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -225,6 +237,9 @@ func (UnimplementedAuthServer) RequestPasswordReset(context.Context, *RequestPas
 }
 func (UnimplementedAuthServer) VerifyEmail(context.Context, *VerifyEmailRequest) (*VerifyEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyEmail not implemented")
+}
+func (UnimplementedAuthServer) ResendVerificationEmail(context.Context, *ResendVerificationEmailRequest) (*ResendVerificationEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResendVerificationEmail not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
@@ -455,6 +470,24 @@ func _Auth_VerifyEmail_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_ResendVerificationEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResendVerificationEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).ResendVerificationEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_ResendVerificationEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).ResendVerificationEmail(ctx, req.(*ResendVerificationEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -509,6 +542,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyEmail",
 			Handler:    _Auth_VerifyEmail_Handler,
+		},
+		{
+			MethodName: "ResendVerificationEmail",
+			Handler:    _Auth_ResendVerificationEmail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

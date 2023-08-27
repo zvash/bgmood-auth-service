@@ -85,3 +85,11 @@ func pbChangePasswordRequestToValChangePasswordRequest(pbc *pb.ChangePasswordReq
 		TerminateOtherSessions:  pbc.TerminateOtherSessions,
 	}
 }
+
+func pbRequestPasswordResetRequestToValRequestPasswordResetRequest(
+	pbr *pb.RequestPasswordResetRequest,
+) val.RequestPasswordResetRequest {
+	return val.RequestPasswordResetRequest{
+		Email: pbr.GetEmail(),
+	}
+}
