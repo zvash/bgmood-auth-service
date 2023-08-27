@@ -22,6 +22,7 @@ type Querier interface {
 	ListActiveSessions(ctx context.Context, arg ListActiveSessionsParams) ([]Session, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (User, error)
 	TerminateOtherSessions(ctx context.Context, arg TerminateOtherSessionsParams) error
+	TerminateSingleSession(ctx context.Context, arg TerminateSingleSessionParams) error
 	UnsetUserAvatar(ctx context.Context, id uuid.UUID) (User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	VerifyEmail(ctx context.Context, id uuid.UUID) (User, error)

@@ -169,3 +169,20 @@ func (q *Queries) TerminateOtherSessions(ctx context.Context, arg TerminateOther
 	_, err := q.db.Exec(ctx, terminateOtherSessions, arg.ID, arg.UserID)
 	return err
 }
+
+const terminateSingleSession = `-- name: TerminateSingleSession :exec
+DELETE
+FROM sessions
+WHERE id = $1
+  AND user_id = $2
+`
+
+type TerminateSingleSessionParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"user_id"`
+}
+
+func (q *Queries) TerminateSingleSession(ctx context.Context, arg TerminateSingleSessionParams) error {
+	_, err := q.db.Exec(ctx, terminateSingleSession, arg.ID, arg.UserID)
+	return err
+}

@@ -19,15 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Auth_RegisterUser_FullMethodName         = "/pb.Auth/RegisterUser"
-	Auth_Login_FullMethodName                = "/pb.Auth/Login"
-	Auth_ListActiveSessions_FullMethodName   = "/pb.Auth/ListActiveSessions"
-	Auth_Authenticate_FullMethodName         = "/pb.Auth/Authenticate"
-	Auth_Logout_FullMethodName               = "/pb.Auth/Logout"
-	Auth_ChangePassword_FullMethodName       = "/pb.Auth/ChangePassword"
-	Auth_ResetPassword_FullMethodName        = "/pb.Auth/ResetPassword"
-	Auth_RequestPasswordReset_FullMethodName = "/pb.Auth/RequestPasswordReset"
-	Auth_VerifyEmail_FullMethodName          = "/pb.Auth/VerifyEmail"
+	Auth_RegisterUser_FullMethodName           = "/pb.Auth/RegisterUser"
+	Auth_Login_FullMethodName                  = "/pb.Auth/Login"
+	Auth_ListActiveSessions_FullMethodName     = "/pb.Auth/ListActiveSessions"
+	Auth_TerminateSingleSession_FullMethodName = "/pb.Auth/TerminateSingleSession"
+	Auth_Authenticate_FullMethodName           = "/pb.Auth/Authenticate"
+	Auth_Logout_FullMethodName                 = "/pb.Auth/Logout"
+	Auth_ChangePassword_FullMethodName         = "/pb.Auth/ChangePassword"
+	Auth_ResetPassword_FullMethodName          = "/pb.Auth/ResetPassword"
+	Auth_RequestPasswordReset_FullMethodName   = "/pb.Auth/RequestPasswordReset"
+	Auth_VerifyEmail_FullMethodName            = "/pb.Auth/VerifyEmail"
 )
 
 // AuthClient is the client API for Auth service.
@@ -37,6 +38,7 @@ type AuthClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ListActiveSessions(ctx context.Context, in *ListActiveSessionsRequest, opts ...grpc.CallOption) (*ListActiveSessionsResponse, error)
+	TerminateSingleSession(ctx context.Context, in *TerminateSingleSessionRequest, opts ...grpc.CallOption) (*TerminateSingleSessionResponse, error)
 	Authenticate(ctx context.Context, in *AuthenticateRequest, opts ...grpc.CallOption) (*AuthenticateResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
@@ -74,6 +76,15 @@ func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.C
 func (c *authClient) ListActiveSessions(ctx context.Context, in *ListActiveSessionsRequest, opts ...grpc.CallOption) (*ListActiveSessionsResponse, error) {
 	out := new(ListActiveSessionsResponse)
 	err := c.cc.Invoke(ctx, Auth_ListActiveSessions_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) TerminateSingleSession(ctx context.Context, in *TerminateSingleSessionRequest, opts ...grpc.CallOption) (*TerminateSingleSessionResponse, error) {
+	out := new(TerminateSingleSessionResponse)
+	err := c.cc.Invoke(ctx, Auth_TerminateSingleSession_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -141,6 +152,7 @@ type AuthServer interface {
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ListActiveSessions(context.Context, *ListActiveSessionsRequest) (*ListActiveSessionsResponse, error)
+	TerminateSingleSession(context.Context, *TerminateSingleSessionRequest) (*TerminateSingleSessionResponse, error)
 	Authenticate(context.Context, *AuthenticateRequest) (*AuthenticateResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
@@ -162,6 +174,9 @@ func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*LoginResp
 }
 func (UnimplementedAuthServer) ListActiveSessions(context.Context, *ListActiveSessionsRequest) (*ListActiveSessionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListActiveSessions not implemented")
+}
+func (UnimplementedAuthServer) TerminateSingleSession(context.Context, *TerminateSingleSessionRequest) (*TerminateSingleSessionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TerminateSingleSession not implemented")
 }
 func (UnimplementedAuthServer) Authenticate(context.Context, *AuthenticateRequest) (*AuthenticateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
@@ -244,6 +259,24 @@ func _Auth_ListActiveSessions_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).ListActiveSessions(ctx, req.(*ListActiveSessionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_TerminateSingleSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TerminateSingleSessionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).TerminateSingleSession(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_TerminateSingleSession_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).TerminateSingleSession(ctx, req.(*TerminateSingleSessionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -374,6 +407,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListActiveSessions",
 			Handler:    _Auth_ListActiveSessions_Handler,
+		},
+		{
+			MethodName: "TerminateSingleSession",
+			Handler:    _Auth_TerminateSingleSession_Handler,
 		},
 		{
 			MethodName: "Authenticate",

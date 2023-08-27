@@ -22,6 +22,12 @@ FROM sessions
 WHERE id <> $1
   AND user_id = $2;
 
+-- name: TerminateSingleSession :exec
+DELETE
+FROM sessions
+WHERE id = $1
+  AND user_id = $2;
+
 -- name: GetSessionByAccessToken :one
 SELECT *
 FROM sessions
