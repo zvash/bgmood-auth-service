@@ -20,6 +20,7 @@ type Querier interface {
 	GetSessionByAccessToken(ctx context.Context, accessToken string) (Session, error)
 	GetSessionWithActiveRefreshToken(ctx context.Context, refreshToken string) (Session, error)
 	GetTokenByToken(ctx context.Context, token string) (Token, error)
+	GetTokenByTokenAndType(ctx context.Context, arg GetTokenByTokenAndTypeParams) (Token, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByAccessToken(ctx context.Context, accessToken string) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)

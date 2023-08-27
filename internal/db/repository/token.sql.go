@@ -11,24 +11,31 @@ import (
 )
 
 const createToken = `-- name: CreateToken :one
-INSERT INTO tokens (email, token, expires_at)
-VALUES ($1, $2, $3)
-RETURNING id, email, token, expires_at, created_at
+INSERT INTO tokens (email, token, type, expires_at)
+VALUES ($1, $2, $3, $4)
+RETURNING id, email, token, type, expires_at, created_at
 `
 
 type CreateTokenParams struct {
 	Email     string    `json:"email"`
 	Token     string    `json:"token"`
+	Type      TokenType `json:"type"`
 	ExpiresAt time.Time `json:"expires_at"`
 }
 
 func (q *Queries) CreateToken(ctx context.Context, arg CreateTokenParams) (Token, error) {
-	row := q.db.QueryRow(ctx, createToken, arg.Email, arg.Token, arg.ExpiresAt)
+	row := q.db.QueryRow(ctx, createToken,
+		arg.Email,
+		arg.Token,
+		arg.Type,
+		arg.ExpiresAt,
+	)
 	var i Token
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
 		&i.Token,
+		&i.Type,
 		&i.ExpiresAt,
 		&i.CreatedAt,
 	)
@@ -47,7 +54,7 @@ func (q *Queries) DeleteExpiredTokens(ctx context.Context) error {
 }
 
 const getTokenByToken = `-- name: GetTokenByToken :one
-SELECT id, email, token, expires_at, created_at
+SELECT id, email, token, type, expires_at, created_at
 FROM tokens
 WHERE token = $1
 LIMIT 1
@@ -60,6 +67,34 @@ func (q *Queries) GetTokenByToken(ctx context.Context, token string) (Token, err
 		&i.ID,
 		&i.Email,
 		&i.Token,
+		&i.Type,
+		&i.ExpiresAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getTokenByTokenAndType = `-- name: GetTokenByTokenAndType :one
+SELECT id, email, token, type, expires_at, created_at
+FROM tokens
+WHERE token = $1
+  AND type = $2
+LIMIT 1
+`
+
+type GetTokenByTokenAndTypeParams struct {
+	Token string    `json:"token"`
+	Type  TokenType `json:"type"`
+}
+
+func (q *Queries) GetTokenByTokenAndType(ctx context.Context, arg GetTokenByTokenAndTypeParams) (Token, error) {
+	row := q.db.QueryRow(ctx, getTokenByTokenAndType, arg.Token, arg.Type)
+	var i Token
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Token,
+		&i.Type,
 		&i.ExpiresAt,
 		&i.CreatedAt,
 	)

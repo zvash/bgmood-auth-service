@@ -5,11 +5,55 @@
 package repository
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type TokenType string
+
+const (
+	TokenTypeVERIFICATIONEMAIL TokenType = "VERIFICATION_EMAIL"
+	TokenTypePASSWORDRESET     TokenType = "PASSWORD_RESET"
+)
+
+func (e *TokenType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = TokenType(s)
+	case string:
+		*e = TokenType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for TokenType: %T", src)
+	}
+	return nil
+}
+
+type NullTokenType struct {
+	TokenType TokenType `json:"token_type"`
+	Valid     bool      `json:"valid"` // Valid is true if TokenType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullTokenType) Scan(value interface{}) error {
+	if value == nil {
+		ns.TokenType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.TokenType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullTokenType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.TokenType), nil
+}
 
 type Role struct {
 	ID        int64     `json:"id"`
@@ -33,6 +77,7 @@ type Token struct {
 	ID        int64     `json:"id"`
 	Email     string    `json:"email"`
 	Token     string    `json:"token"`
+	Type      TokenType `json:"type"`
 	ExpiresAt time.Time `json:"expires_at"`
 	CreatedAt time.Time `json:"created_at"`
 }

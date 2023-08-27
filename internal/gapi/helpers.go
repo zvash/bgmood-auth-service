@@ -35,12 +35,13 @@ func (server *Server) getAllActiveSessions(ctx context.Context) ([]repository.Se
 	return sessions, accessToken, nil
 }
 
-func (server *Server) createUniqueToken(ctx context.Context, email string, duration time.Duration) (repository.Token, error) {
+func (server *Server) createUniqueToken(ctx context.Context, email string, tokenType repository.TokenType, duration time.Duration) (repository.Token, error) {
 	for {
 		token := strings.ToUpper(util.RandomAlphaNumString(6))
 		record, err := server.db.CreateToken(ctx, repository.CreateTokenParams{
 			Email:     email,
 			Token:     token,
+			Type:      tokenType,
 			ExpiresAt: time.Now().Add(duration),
 		})
 		if err != nil {
@@ -54,7 +55,7 @@ func (server *Server) createUniqueToken(ctx context.Context, email string, durat
 }
 
 func (server *Server) sendVerifyEmail(ctx context.Context, user repository.User) error {
-	tokenRecord, err := server.createUniqueToken(ctx, user.Email, server.config.VerifyEmailDuration)
+	tokenRecord, err := server.createUniqueToken(ctx, user.Email, repository.TokenTypeVERIFICATIONEMAIL, server.config.VerifyEmailDuration)
 	if err != nil {
 		return err
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/zvash/bgmood-auth-service/internal/db"
+	"github.com/zvash/bgmood-auth-service/internal/db/repository"
 	"github.com/zvash/bgmood-auth-service/internal/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -28,7 +29,7 @@ func (server *Server) RequestPasswordReset(
 		}
 		return nil, status.Errorf(codes.Internal, "internal server error")
 	}
-	token, err := server.createUniqueToken(ctx, user.Email, server.config.PasswordResetDuration)
+	token, err := server.createUniqueToken(ctx, user.Email, repository.TokenTypePASSWORDRESET, server.config.PasswordResetDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal server error")
 	}

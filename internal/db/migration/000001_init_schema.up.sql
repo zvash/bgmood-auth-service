@@ -58,13 +58,17 @@ VALUES ('root'),
        ('admin'),
        ('normal');
 
+CREATE TYPE token_type AS ENUM ('VERIFICATION_EMAIL', 'PASSWORD_RESET');
+
 CREATE TABLE "tokens"
 (
     "id"    bigserial PRIMARY KEY,
     "email" varchar NOT NULL,
     "token" varchar NOT NULL UNIQUE,
+    "type" token_type NOT NULL,
     "expires_at"    timestamptz NOT NULL,
     "created_at"    timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE INDEX "tokens_token_index" ON "tokens" (token);
+CREATE INDEX "tokens_token_type_index" ON "tokens" (token, type);
