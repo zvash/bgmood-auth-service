@@ -18,6 +18,7 @@ type DataStore interface {
 		shouldTerminate bool,
 		currentSessionID uuid.UUID,
 	) (bool, error)
+	RefreshTokenTransaction(ctx context.Context, refreshToken, newAccessToken string) (repository.Session, error)
 }
 
 type SQLStore struct {

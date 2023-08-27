@@ -16,6 +16,7 @@ type Querier interface {
 	GetRoleByName(ctx context.Context, name string) (Role, error)
 	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetSessionByAccessToken(ctx context.Context, accessToken string) (Session, error)
+	GetSessionWithActiveRefreshToken(ctx context.Context, refreshToken string) (Session, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByAccessToken(ctx context.Context, accessToken string) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
@@ -24,6 +25,7 @@ type Querier interface {
 	TerminateOtherSessions(ctx context.Context, arg TerminateOtherSessionsParams) error
 	TerminateSingleSession(ctx context.Context, arg TerminateSingleSessionParams) error
 	UnsetUserAvatar(ctx context.Context, id uuid.UUID) (User, error)
+	UpdateAccessToken(ctx context.Context, arg UpdateAccessTokenParams) (Session, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	VerifyEmail(ctx context.Context, id uuid.UUID) (User, error)
 }

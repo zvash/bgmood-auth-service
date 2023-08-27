@@ -40,3 +40,16 @@ WHERE user_id = $1
   AND expires_at > now()
   AND is_blocked = false
 ORDER BY access_token = $2, expires_at DESC;
+
+-- name: GetSessionWithActiveRefreshToken :one
+SELECT *
+FROM sessions
+WHERE refresh_token = $1
+  AND is_blocked = false
+  AND expires_at > now();
+
+-- name: UpdateAccessToken :one
+UPDATE sessions
+SET access_token = $2
+WHERE id = $1
+RETURNING *;

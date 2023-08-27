@@ -109,6 +109,31 @@ func (q *Queries) GetSessionByAccessToken(ctx context.Context, accessToken strin
 	return i, err
 }
 
+const getSessionWithActiveRefreshToken = `-- name: GetSessionWithActiveRefreshToken :one
+SELECT id, user_id, access_token, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
+FROM sessions
+WHERE refresh_token = $1
+  AND is_blocked = false
+  AND expires_at > now()
+`
+
+func (q *Queries) GetSessionWithActiveRefreshToken(ctx context.Context, refreshToken string) (Session, error) {
+	row := q.db.QueryRow(ctx, getSessionWithActiveRefreshToken, refreshToken)
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.AccessToken,
+		&i.RefreshToken,
+		&i.UserAgent,
+		&i.ClientIp,
+		&i.IsBlocked,
+		&i.ExpiresAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const listActiveSessions = `-- name: ListActiveSessions :many
 SELECT id, user_id, access_token, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
 FROM sessions
@@ -185,4 +210,33 @@ type TerminateSingleSessionParams struct {
 func (q *Queries) TerminateSingleSession(ctx context.Context, arg TerminateSingleSessionParams) error {
 	_, err := q.db.Exec(ctx, terminateSingleSession, arg.ID, arg.UserID)
 	return err
+}
+
+const updateAccessToken = `-- name: UpdateAccessToken :one
+UPDATE sessions
+SET access_token = $2
+WHERE id = $1
+RETURNING id, user_id, access_token, refresh_token, user_agent, client_ip, is_blocked, expires_at, created_at
+`
+
+type UpdateAccessTokenParams struct {
+	ID          uuid.UUID `json:"id"`
+	AccessToken string    `json:"access_token"`
+}
+
+func (q *Queries) UpdateAccessToken(ctx context.Context, arg UpdateAccessTokenParams) (Session, error) {
+	row := q.db.QueryRow(ctx, updateAccessToken, arg.ID, arg.AccessToken)
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.AccessToken,
+		&i.RefreshToken,
+		&i.UserAgent,
+		&i.ClientIp,
+		&i.IsBlocked,
+		&i.ExpiresAt,
+		&i.CreatedAt,
+	)
+	return i, err
 }
