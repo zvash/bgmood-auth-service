@@ -58,3 +58,13 @@ VALUES ('root'),
        ('admin'),
        ('normal');
 
+CREATE TABLE "tokens"
+(
+    "id"    bigserial PRIMARY KEY,
+    "email" varchar NOT NULL,
+    "token" varchar NOT NULL UNIQUE,
+    "expires_at"    timestamptz NOT NULL,
+    "created_at"    timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE INDEX "tokens_token_index" ON "tokens" (token);
