@@ -29,6 +29,14 @@ type Session struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
+type Token struct {
+	ID        int64     `json:"id"`
+	Email     string    `json:"email"`
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type User struct {
 	ID         uuid.UUID          `json:"id"`
 	Name       string             `json:"name"`
