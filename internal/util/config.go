@@ -3,8 +3,6 @@ package util
 import (
 	"github.com/spf13/viper"
 	"time"
-
-	_ "github.com/spf13/viper"
 )
 
 // Config stores all configuration of the application.
