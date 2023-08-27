@@ -9,6 +9,7 @@ import "rpc_request_password_reset.proto";
 import "rpc_verify_email.proto";
 import "rpc_list_active_sessions.proto";
 import "rpc_terminate_single_session.proto";
+import "rpc_terminate_other_sessions.proto";
 
 package pb;
 
@@ -19,6 +20,7 @@ service Auth {
   rpc Login (LoginRequest) returns (LoginResponse) {}
   rpc ListActiveSessions (ListActiveSessionsRequest) returns (ListActiveSessionsResponse) {}
   rpc TerminateSingleSession (TerminateSingleSessionRequest) returns (TerminateSingleSessionResponse) {}
+  rpc TerminateOtherSessions (TerminateOtherSessionsRequest) returns (TerminateOtherSessionsResponse) {}
   rpc Authenticate (AuthenticateRequest) returns (AuthenticateResponse) {}
   rpc Logout (LogoutRequest) returns (LogoutResponse) {}
   rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse) {}

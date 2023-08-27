@@ -23,6 +23,7 @@ const (
 	Auth_Login_FullMethodName                  = "/pb.Auth/Login"
 	Auth_ListActiveSessions_FullMethodName     = "/pb.Auth/ListActiveSessions"
 	Auth_TerminateSingleSession_FullMethodName = "/pb.Auth/TerminateSingleSession"
+	Auth_TerminateOtherSessions_FullMethodName = "/pb.Auth/TerminateOtherSessions"
 	Auth_Authenticate_FullMethodName           = "/pb.Auth/Authenticate"
 	Auth_Logout_FullMethodName                 = "/pb.Auth/Logout"
 	Auth_ChangePassword_FullMethodName         = "/pb.Auth/ChangePassword"
@@ -39,6 +40,7 @@ type AuthClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	ListActiveSessions(ctx context.Context, in *ListActiveSessionsRequest, opts ...grpc.CallOption) (*ListActiveSessionsResponse, error)
 	TerminateSingleSession(ctx context.Context, in *TerminateSingleSessionRequest, opts ...grpc.CallOption) (*TerminateSingleSessionResponse, error)
+	TerminateOtherSessions(ctx context.Context, in *TerminateOtherSessionsRequest, opts ...grpc.CallOption) (*TerminateOtherSessionsResponse, error)
 	Authenticate(ctx context.Context, in *AuthenticateRequest, opts ...grpc.CallOption) (*AuthenticateResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
@@ -85,6 +87,15 @@ func (c *authClient) ListActiveSessions(ctx context.Context, in *ListActiveSessi
 func (c *authClient) TerminateSingleSession(ctx context.Context, in *TerminateSingleSessionRequest, opts ...grpc.CallOption) (*TerminateSingleSessionResponse, error) {
 	out := new(TerminateSingleSessionResponse)
 	err := c.cc.Invoke(ctx, Auth_TerminateSingleSession_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) TerminateOtherSessions(ctx context.Context, in *TerminateOtherSessionsRequest, opts ...grpc.CallOption) (*TerminateOtherSessionsResponse, error) {
+	out := new(TerminateOtherSessionsResponse)
+	err := c.cc.Invoke(ctx, Auth_TerminateOtherSessions_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -153,6 +164,7 @@ type AuthServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	ListActiveSessions(context.Context, *ListActiveSessionsRequest) (*ListActiveSessionsResponse, error)
 	TerminateSingleSession(context.Context, *TerminateSingleSessionRequest) (*TerminateSingleSessionResponse, error)
+	TerminateOtherSessions(context.Context, *TerminateOtherSessionsRequest) (*TerminateOtherSessionsResponse, error)
 	Authenticate(context.Context, *AuthenticateRequest) (*AuthenticateResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
@@ -177,6 +189,9 @@ func (UnimplementedAuthServer) ListActiveSessions(context.Context, *ListActiveSe
 }
 func (UnimplementedAuthServer) TerminateSingleSession(context.Context, *TerminateSingleSessionRequest) (*TerminateSingleSessionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TerminateSingleSession not implemented")
+}
+func (UnimplementedAuthServer) TerminateOtherSessions(context.Context, *TerminateOtherSessionsRequest) (*TerminateOtherSessionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TerminateOtherSessions not implemented")
 }
 func (UnimplementedAuthServer) Authenticate(context.Context, *AuthenticateRequest) (*AuthenticateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
@@ -277,6 +292,24 @@ func _Auth_TerminateSingleSession_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).TerminateSingleSession(ctx, req.(*TerminateSingleSessionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_TerminateOtherSessions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TerminateOtherSessionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).TerminateOtherSessions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_TerminateOtherSessions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).TerminateOtherSessions(ctx, req.(*TerminateOtherSessionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -411,6 +444,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TerminateSingleSession",
 			Handler:    _Auth_TerminateSingleSession_Handler,
+		},
+		{
+			MethodName: "TerminateOtherSessions",
+			Handler:    _Auth_TerminateOtherSessions_Handler,
 		},
 		{
 			MethodName: "Authenticate",

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/zvash/bgmood-auth-service/pb";
+
+message TerminateOtherSessionsRequest {}
+
+message TerminateOtherSessionsResponse {
+  string message = 1;
+}
