@@ -10,7 +10,7 @@ import (
 	"github.com/zvash/bgmood-auth-service/internal/worker"
 )
 
-// Server serves gRPC requests for our banking service.
+// Server serves gRPC requests for our auth service.
 type Server struct {
 	pb.UnimplementedAuthServer
 	config           util.Config
