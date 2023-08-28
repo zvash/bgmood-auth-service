@@ -3,9 +3,11 @@ package gapi
 import (
 	"context"
 	"errors"
+	"github.com/hibiken/asynq"
 	"github.com/zvash/bgmood-auth-service/internal/db"
 	"github.com/zvash/bgmood-auth-service/internal/db/repository"
 	"github.com/zvash/bgmood-auth-service/internal/util"
+	"github.com/zvash/bgmood-auth-service/internal/worker"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
@@ -60,6 +62,16 @@ func (server *Server) sendVerifyEmail(ctx context.Context, user repository.User)
 		return err
 	}
 	log.Println("email verification", tokenRecord.Token)
-	//TODO: send a request to notification service to send a verification email to user
-	return nil
+	payload := worker.PayloadSendVerifyEmail{
+		Email: user.Email,
+		Name:  user.Name,
+		Token: tokenRecord.Token,
+	}
+	opts := []asynq.Option{
+		asynq.MaxRetry(10),
+		asynq.ProcessIn(10 * time.Second),
+		asynq.Queue(worker.QueueDefault),
+	}
+	err = server.messagePublisher.PublishTaskSendVerifyEmail(ctx, &payload, opts...)
+	return err
 }

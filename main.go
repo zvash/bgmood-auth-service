@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/hibiken/asynq"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/zvash/bgmood-auth-service/internal/db"
 	"github.com/zvash/bgmood-auth-service/internal/gapi"
 	"github.com/zvash/bgmood-auth-service/internal/pb"
 	"github.com/zvash/bgmood-auth-service/internal/util"
+	"github.com/zvash/bgmood-auth-service/internal/worker"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -20,7 +22,11 @@ func main() {
 		log.Fatal("cannot load config:", err)
 	}
 	dataStore := createDBConnectionPool(config.DBSource)
-	runGrpcServer(config, dataStore)
+
+	redisOpt := createRedisClientOption(config)
+	messagePublisher := worker.NewRedisMessagePublisher(redisOpt)
+
+	runGrpcServer(config, dataStore, messagePublisher)
 }
 
 func createDBConnectionPool(dbSource string) db.DataStore {
@@ -41,8 +47,8 @@ func createDBConnectionPool(dbSource string) db.DataStore {
 	return db.NewDataStore(connPool)
 }
 
-func runGrpcServer(config util.Config, dataStore db.DataStore) {
-	server, err := gapi.NewServer(config, dataStore)
+func runGrpcServer(config util.Config, dataStore db.DataStore, messagePublisher worker.MessagePublisher) {
+	server, err := gapi.NewServer(config, dataStore, messagePublisher)
 	if err != nil {
 		log.Fatal("cannot create gRPC server")
 	}
@@ -60,5 +66,11 @@ func runGrpcServer(config util.Config, dataStore db.DataStore) {
 	err = grpcServer.Serve(listener)
 	if err != nil {
 		log.Fatal("cannot start gRPC server")
+	}
+}
+
+func createRedisClientOption(config util.Config) asynq.RedisClientOpt {
+	return asynq.RedisClientOpt{
+		Addr: config.RedisAddress,
 	}
 }

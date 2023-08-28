@@ -212,3 +212,26 @@ func (q *Queries) VerifyEmail(ctx context.Context, id uuid.UUID) (User, error) {
 	)
 	return i, err
 }
+
+const verifyEmailByEmail = `-- name: VerifyEmailByEmail :one
+UPDATE users
+SET verified_at = now()
+WHERE email = $1
+RETURNING id, name, email, password, avatar, verified_at, created_at, deleted_at
+`
+
+func (q *Queries) VerifyEmailByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRow(ctx, verifyEmailByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+		&i.Avatar,
+		&i.VerifiedAt,
+		&i.CreatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}

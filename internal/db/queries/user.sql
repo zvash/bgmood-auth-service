@@ -40,6 +40,12 @@ SET verified_at = now()
 WHERE id = $1
 RETURNING *;
 
+-- name: VerifyEmailByEmail :one
+UPDATE users
+SET verified_at = now()
+WHERE email = $1
+RETURNING *;
+
 -- name: AttachRoleToUser :exec
 INSERT INTO user_role (user_id, role_id)
 VALUES ($1, $2)

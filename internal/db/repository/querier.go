@@ -32,6 +32,7 @@ type Querier interface {
 	UpdateAccessToken(ctx context.Context, arg UpdateAccessTokenParams) (Session, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 	VerifyEmail(ctx context.Context, id uuid.UUID) (User, error)
+	VerifyEmailByEmail(ctx context.Context, email string) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

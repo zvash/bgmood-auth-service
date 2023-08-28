@@ -16,6 +16,9 @@ func (server *Server) ResendVerificationEmail(
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized.")
 	}
+	if !user.VerifiedAt.Time.IsZero() {
+		return nil, status.Errorf(codes.AlreadyExists, "your email address is already verified.")
+	}
 	err = server.sendVerifyEmail(ctx, user)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal server error.")
