@@ -10,7 +10,6 @@ import (
 	"github.com/zvash/bgmood-auth-service/internal/worker"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
 	"strings"
 	"time"
 )
@@ -61,7 +60,6 @@ func (server *Server) sendVerifyEmail(ctx context.Context, user repository.User)
 	if err != nil {
 		return err
 	}
-	log.Println("email verification", tokenRecord.Token)
 	payload := worker.PayloadSendVerifyEmail{
 		Email: user.Email,
 		Name:  user.Name,
@@ -73,5 +71,24 @@ func (server *Server) sendVerifyEmail(ctx context.Context, user repository.User)
 		asynq.Queue(worker.QueueDefault),
 	}
 	err = server.messagePublisher.PublishTaskSendVerifyEmail(ctx, &payload, opts...)
+	return err
+}
+
+func (server *Server) sendPasswordResetEmail(ctx context.Context, email string) error {
+	tokenRecord, err := server.createUniqueToken(ctx, email, repository.TokenTypePASSWORDRESET, server.config.PasswordResetDuration)
+	if err != nil {
+		return err
+	}
+	payload := worker.PayloadSendResetPasswordEmail{
+		Email:   tokenRecord.Email,
+		AppName: server.config.AppName,
+		Token:   tokenRecord.Token,
+	}
+	opts := []asynq.Option{
+		asynq.MaxRetry(10),
+		asynq.ProcessIn(10 * time.Second),
+		asynq.Queue(worker.QueueDefault),
+	}
+	err = server.messagePublisher.PublishTaskSendResetPasswordEmail(ctx, &payload, opts...)
 	return err
 }

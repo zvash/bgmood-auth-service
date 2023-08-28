@@ -33,7 +33,10 @@ func (server *Server) RequestPasswordReset(
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "internal server error")
 	}
-	//TODO: make a request to notification service to send a password reset email to the user
+	err = server.sendPasswordResetEmail(ctx, req.Email)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "internal server error.")
+	}
 	log.Println(token.Token)
 	resp := &pb.RequestPasswordResetResponse{
 		Message: "password reset token was sent to the given email.",

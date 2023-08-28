@@ -17,4 +17,9 @@ type MessagePublisher interface {
 		payload *PayloadSendVerifyEmail,
 		opts ...asynq.Option,
 	) error
+	PublishTaskSendResetPasswordEmail(
+		ctx context.Context,
+		payload *PayloadSendResetPasswordEmail,
+		opts ...asynq.Option,
+	) error
 }

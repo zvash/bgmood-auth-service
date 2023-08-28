@@ -90,3 +90,12 @@ func pbRequestPasswordResetRequestToValRequestPasswordResetRequest(
 		Email: pbr.GetEmail(),
 	}
 }
+
+func pbResetPasswordRequestToValResetPasswordRequest(pbr *pb.ResetPasswordRequest) val.ResetPasswordRequest {
+	return val.ResetPasswordRequest{
+		Email:                pbr.Email,
+		Token:                pbr.Token,
+		Password:             pbr.Password,
+		PasswordConfirmation: pbr.PasswordConfirmation,
+	}
+}
