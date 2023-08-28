@@ -2,7 +2,7 @@ package gapi
 
 import (
 	"context"
-	"github.com/zvash/bgmood-auth-service/internal/pb"
+	pb "github.com/zvash/bgmood-auth-service/internal/authpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

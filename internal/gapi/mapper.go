@@ -3,8 +3,8 @@ package gapi
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
+	pb "github.com/zvash/bgmood-auth-service/internal/authpb"
 	"github.com/zvash/bgmood-auth-service/internal/db/repository"
-	"github.com/zvash/bgmood-auth-service/internal/pb"
 	"github.com/zvash/bgmood-auth-service/internal/val"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"

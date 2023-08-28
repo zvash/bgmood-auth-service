@@ -4,7 +4,7 @@
 // - protoc             v4.23.4
 // source: service_auth.proto
 
-package pb
+package authpb
 
 import (
 	context "context"
@@ -19,19 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Auth_RegisterUser_FullMethodName            = "/pb.Auth/RegisterUser"
-	Auth_RefreshToken_FullMethodName            = "/pb.Auth/RefreshToken"
-	Auth_Login_FullMethodName                   = "/pb.Auth/Login"
-	Auth_ListActiveSessions_FullMethodName      = "/pb.Auth/ListActiveSessions"
-	Auth_TerminateSingleSession_FullMethodName  = "/pb.Auth/TerminateSingleSession"
-	Auth_TerminateOtherSessions_FullMethodName  = "/pb.Auth/TerminateOtherSessions"
-	Auth_Authenticate_FullMethodName            = "/pb.Auth/Authenticate"
-	Auth_Logout_FullMethodName                  = "/pb.Auth/Logout"
-	Auth_ChangePassword_FullMethodName          = "/pb.Auth/ChangePassword"
-	Auth_ResetPassword_FullMethodName           = "/pb.Auth/ResetPassword"
-	Auth_RequestPasswordReset_FullMethodName    = "/pb.Auth/RequestPasswordReset"
-	Auth_VerifyEmail_FullMethodName             = "/pb.Auth/VerifyEmail"
-	Auth_ResendVerificationEmail_FullMethodName = "/pb.Auth/ResendVerificationEmail"
+	Auth_RegisterUser_FullMethodName            = "/authpb.Auth/RegisterUser"
+	Auth_RefreshToken_FullMethodName            = "/authpb.Auth/RefreshToken"
+	Auth_Login_FullMethodName                   = "/authpb.Auth/Login"
+	Auth_ListActiveSessions_FullMethodName      = "/authpb.Auth/ListActiveSessions"
+	Auth_TerminateSingleSession_FullMethodName  = "/authpb.Auth/TerminateSingleSession"
+	Auth_TerminateOtherSessions_FullMethodName  = "/authpb.Auth/TerminateOtherSessions"
+	Auth_Authenticate_FullMethodName            = "/authpb.Auth/Authenticate"
+	Auth_Logout_FullMethodName                  = "/authpb.Auth/Logout"
+	Auth_ChangePassword_FullMethodName          = "/authpb.Auth/ChangePassword"
+	Auth_ResetPassword_FullMethodName           = "/authpb.Auth/ResetPassword"
+	Auth_RequestPasswordReset_FullMethodName    = "/authpb.Auth/RequestPasswordReset"
+	Auth_VerifyEmail_FullMethodName             = "/authpb.Auth/VerifyEmail"
+	Auth_ResendVerificationEmail_FullMethodName = "/authpb.Auth/ResendVerificationEmail"
 )
 
 // AuthClient is the client API for Auth service.
@@ -492,7 +492,7 @@ func _Auth_ResendVerificationEmail_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Auth_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Auth",
+	ServiceName: "authpb.Auth",
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

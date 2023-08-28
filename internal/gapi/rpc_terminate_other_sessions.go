@@ -2,8 +2,8 @@ package gapi
 
 import (
 	"context"
+	pb "github.com/zvash/bgmood-auth-service/internal/authpb"
 	"github.com/zvash/bgmood-auth-service/internal/db/repository"
-	"github.com/zvash/bgmood-auth-service/internal/pb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
