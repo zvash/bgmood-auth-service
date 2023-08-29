@@ -22,6 +22,7 @@ const (
 	Auth_RegisterUser_FullMethodName            = "/authpb.Auth/RegisterUser"
 	Auth_RefreshToken_FullMethodName            = "/authpb.Auth/RefreshToken"
 	Auth_Login_FullMethodName                   = "/authpb.Auth/Login"
+	Auth_UpdateUser_FullMethodName              = "/authpb.Auth/UpdateUser"
 	Auth_ListActiveSessions_FullMethodName      = "/authpb.Auth/ListActiveSessions"
 	Auth_TerminateSingleSession_FullMethodName  = "/authpb.Auth/TerminateSingleSession"
 	Auth_TerminateOtherSessions_FullMethodName  = "/authpb.Auth/TerminateOtherSessions"
@@ -41,6 +42,7 @@ type AuthClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	ListActiveSessions(ctx context.Context, in *ListActiveSessionsRequest, opts ...grpc.CallOption) (*ListActiveSessionsResponse, error)
 	TerminateSingleSession(ctx context.Context, in *TerminateSingleSessionRequest, opts ...grpc.CallOption) (*TerminateSingleSessionResponse, error)
 	TerminateOtherSessions(ctx context.Context, in *TerminateOtherSessionsRequest, opts ...grpc.CallOption) (*TerminateOtherSessionsResponse, error)
@@ -82,6 +84,15 @@ func (c *authClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, 
 func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
 	err := c.cc.Invoke(ctx, Auth_Login_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
+	out := new(UpdateUserResponse)
+	err := c.cc.Invoke(ctx, Auth_UpdateUser_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -185,6 +196,7 @@ type AuthServer interface {
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	ListActiveSessions(context.Context, *ListActiveSessionsRequest) (*ListActiveSessionsResponse, error)
 	TerminateSingleSession(context.Context, *TerminateSingleSessionRequest) (*TerminateSingleSessionResponse, error)
 	TerminateOtherSessions(context.Context, *TerminateOtherSessionsRequest) (*TerminateOtherSessionsResponse, error)
@@ -210,6 +222,9 @@ func (UnimplementedAuthServer) RefreshToken(context.Context, *RefreshTokenReques
 }
 func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
 func (UnimplementedAuthServer) ListActiveSessions(context.Context, *ListActiveSessionsRequest) (*ListActiveSessionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListActiveSessions not implemented")
@@ -304,6 +319,24 @@ func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Auth_UpdateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).UpdateUser(ctx, req.(*UpdateUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -506,6 +539,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _Auth_Login_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _Auth_UpdateUser_Handler,
 		},
 		{
 			MethodName: "ListActiveSessions",

@@ -99,3 +99,10 @@ func pbResetPasswordRequestToValResetPasswordRequest(pbr *pb.ResetPasswordReques
 		PasswordConfirmation: pbr.PasswordConfirmation,
 	}
 }
+
+func pbUpdateUserRequestToValUpdateUserRequest(pbu *pb.UpdateUserRequest) val.UpdateUserRequest {
+
+	return val.UpdateUserRequest{
+		Name: pbu.GetName(),
+	}
+}
