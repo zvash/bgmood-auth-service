@@ -20,8 +20,8 @@ func (server *Server) UpdateUser(ctx context.Context, req *authpb.UpdateUserRequ
 	}
 	user, err = server.db.UpdateUser(ctx, repository.UpdateUserParams{
 		ID:     user.ID,
-		Name:   pgtype.Text{String: *req.Name, Valid: req.Name != nil},
-		Avatar: pgtype.Text{String: *req.Avatar, Valid: req.Avatar != nil},
+		Name:   pgtype.Text{String: req.GetName(), Valid: req.Name != nil},
+		Avatar: pgtype.Text{String: req.GetAvatar(), Valid: req.Avatar != nil},
 	})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to update user's data")
