@@ -19,8 +19,9 @@ func (server *Server) UpdateUser(ctx context.Context, req *authpb.UpdateUserRequ
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized.")
 	}
 	user, err = server.db.UpdateUser(ctx, repository.UpdateUserParams{
-		ID:   user.ID,
-		Name: pgtype.Text{String: dto.Name, Valid: true},
+		ID:     user.ID,
+		Name:   pgtype.Text{String: *req.Name, Valid: req.Name != nil},
+		Avatar: pgtype.Text{String: *req.Avatar, Valid: req.Avatar != nil},
 	})
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to update user's data")
