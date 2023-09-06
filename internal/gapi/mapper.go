@@ -40,7 +40,7 @@ func errorResponsesToStatusErrors(errs []val.ErrorResponse) error {
 	if err != nil {
 		return statusInvalid.Err()
 	}
-	return statusDetails.Err()
+	return status.Errorf(statusDetails.Code(), "%v", statusDetails.Details())
 }
 
 func pbRegisterUserRequestToValRegisterUserRequest(pbr *pb.RegisterUserRequest) val.RegisterUserRequest {
