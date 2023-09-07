@@ -7,7 +7,6 @@ package repository
 
 import (
 	"context"
-	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -98,10 +97,10 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUsersInfoByUserIds = `-- name: GetUsersInfoByUserIds :many
-SELECT id, name, email, password, avatar, verified_at, created_at, deleted_at FROM users WHERE id IN ($1)
+SELECT id, name, email, password, avatar, verified_at, created_at, deleted_at FROM users WHERE id IN ($1::varchar[])
 `
 
-func (q *Queries) GetUsersInfoByUserIds(ctx context.Context, userids []uuid.UUID) ([]User, error) {
+func (q *Queries) GetUsersInfoByUserIds(ctx context.Context, userids []string) ([]User, error) {
 	rows, err := q.db.Query(ctx, getUsersInfoByUserIds, userids)
 	if err != nil {
 		return nil, err

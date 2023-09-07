@@ -24,7 +24,7 @@ type Querier interface {
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByAccessToken(ctx context.Context, accessToken string) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
-	GetUsersInfoByUserIds(ctx context.Context, userids []uuid.UUID) ([]User, error)
+	GetUsersInfoByUserIds(ctx context.Context, userids []string) ([]User, error)
 	ListActiveSessions(ctx context.Context, arg ListActiveSessionsParams) ([]Session, error)
 	RegisterUser(ctx context.Context, arg RegisterUserParams) (User, error)
 	TerminateOtherSessions(ctx context.Context, arg TerminateOtherSessionsParams) error
