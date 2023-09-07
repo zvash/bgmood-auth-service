@@ -7,6 +7,7 @@ package repository
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -94,6 +95,39 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.DeletedAt,
 	)
 	return i, err
+}
+
+const getUsersInfoByUserIds = `-- name: GetUsersInfoByUserIds :many
+SELECT id, name, email, password, avatar, verified_at, created_at, deleted_at FROM users WHERE id IN ($1)
+`
+
+func (q *Queries) GetUsersInfoByUserIds(ctx context.Context, userids []uuid.UUID) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUsersInfoByUserIds, userids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []User{}
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Password,
+			&i.Avatar,
+			&i.VerifiedAt,
+			&i.CreatedAt,
+			&i.DeletedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const registerUser = `-- name: RegisterUser :one

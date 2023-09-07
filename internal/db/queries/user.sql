@@ -50,3 +50,6 @@ RETURNING *;
 INSERT INTO user_role (user_id, role_id)
 VALUES ($1, $2)
 ON CONFLICT DO NOTHING;
+
+-- name: GetUsersInfoByUserIds :many
+SELECT * FROM users WHERE id IN (sqlc.slice('userIds'));

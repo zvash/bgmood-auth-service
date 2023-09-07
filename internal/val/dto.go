@@ -33,3 +33,7 @@ type ResetPasswordRequest struct {
 type UpdateUserRequest struct {
 	Name string `json:"name" validate:"omitempty,min=2"`
 }
+
+type GetUsersInfoRequest struct {
+	UserIds []string `json:"user_ids" validate:"required,min=1,dive,uuid"`
+}

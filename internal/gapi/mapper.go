@@ -101,8 +101,13 @@ func pbResetPasswordRequestToValResetPasswordRequest(pbr *pb.ResetPasswordReques
 }
 
 func pbUpdateUserRequestToValUpdateUserRequest(pbu *pb.UpdateUserRequest) val.UpdateUserRequest {
-
 	return val.UpdateUserRequest{
 		Name: pbu.GetName(),
+	}
+}
+
+func pbGetUsersInfoRequestToValGetUsersInfoRequest(req *pb.GetUsersInfoRequest) val.GetUsersInfoRequest {
+	return val.GetUsersInfoRequest{
+		UserIds: req.GetUserIds(),
 	}
 }
