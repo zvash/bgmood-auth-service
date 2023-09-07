@@ -3,6 +3,7 @@ package gapi
 import (
 	"context"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/zvash/bgmood-auth-service/internal/authpb"
 	"github.com/zvash/bgmood-auth-service/internal/db"
 	"google.golang.org/grpc/codes"
@@ -18,7 +19,18 @@ func (server *Server) GetUsersInfo(ctx context.Context, req *authpb.GetUsersInfo
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized.")
 	}
-	dbUsers, err := server.db.GetUsersInfoByUserIds(ctx, dto.UserIds)
+	userUUIDs := make([]uuid.UUID, 0)
+	for _, userId := range dto.UserIds {
+		userUUID, err := uuid.Parse(userId)
+		if err != nil {
+			continue
+		}
+		userUUIDs = append(userUUIDs, userUUID)
+	}
+	if len(userUUIDs) == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "non of provided user ids are valid")
+	}
+	dbUsers, err := server.db.GetUsersInfoByUserIds(ctx, userUUIDs)
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
 			return nil, status.Errorf(codes.NotFound, "no record were found")

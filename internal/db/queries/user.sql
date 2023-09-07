@@ -52,4 +52,4 @@ VALUES ($1, $2)
 ON CONFLICT DO NOTHING;
 
 -- name: GetUsersInfoByUserIds :many
-SELECT * FROM users WHERE id IN (sqlc.arg('userIds')::varchar[]);
+SELECT * FROM users WHERE id = ANY(sqlc.arg('userIds')::uuid[]);
